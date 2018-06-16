@@ -91,7 +91,7 @@ export const createApiServer = ({ db, games }) => {
 
     const gameID = getNewGameInstanceID();
     const namespacedGameID = `${gameName}:${gameID}`;
-
+    console.log('about to set', db);
     await db.set(getGameMetadataKey(namespacedGameID), gameMetadata);
     await db.set(namespacedGameID, state);
 
@@ -107,6 +107,7 @@ export const createApiServer = ({ db, games }) => {
     const playerName = ctx.request.body.playerName;
 
     const namespacedGameID = `${gameName}:${gameID}`;
+    console.log(getGameMetadataKey(namespacedGameID));
     const gameMetadata = await db.get(getGameMetadataKey(namespacedGameID));
 
     if (gameMetadata === null) {

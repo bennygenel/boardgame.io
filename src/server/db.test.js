@@ -8,6 +8,26 @@
 
 import { InMemory, Mongo } from './db';
 import * as MongoDB from 'mongo-mock';
+// import firebasemock from 'firebase-mock';
+
+// const mockdatabase = new firebasemock.MockFirebase();
+// const mockfirestore = new firebasemock.MockFirestore();
+// var mocksdk = new firebasemock.MockFirebaseSdk(
+//   // use null if your code does not use RTDB
+//   (path) => {
+//     return path ? mockdatabase.child(path) : mockdatabase;
+//   },
+//   // use null if your code does not use AUTHENTICATION
+//   () => null,
+//   // use null if your code does not use FIRESTORE
+//   () => {
+//     return mockfirestore;
+//   },
+//   // use null if your code does not use STORAGE
+//   () => null,
+//   // use null if your code does not use MESSAGING
+//   () => null
+// );
 
 test('basic', async () => {
   const db = new InMemory();
@@ -104,3 +124,5 @@ test('Mongo - race conditions', async () => {
   expect(await db.get('gameID')).toMatchObject({ _stateID: 1 });
   expect(db.cache.get('gameID')).toMatchObject({ _stateID: 1 });
 });
+
+test('Firebase', async () => {});

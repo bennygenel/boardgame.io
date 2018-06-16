@@ -22,20 +22,23 @@ const DEV = process.env.NODE_ENV === 'development';
 const PROD = !DEV;
 
 const server = Server({ games: [TicTacToe, Chess, TurnExample] });
-
+// server.db.connect();
+// console.log(server);
 if (DEV) {
+  // console.log('1');
   server.app.use(
     KoaWebpack({
       config: WebpackConfig,
     })
   );
+  // console.log('2');
 }
 
 if (PROD) {
   server.app.use(KoaStatic(path.join(__dirname, 'dist')));
   server.app.use(KoaHelmet());
 }
-
+// console.log('3', server.run);
 server.run(PORT, () => {
   console.log(`Serving at: http://localhost:${PORT}/`);
 });
