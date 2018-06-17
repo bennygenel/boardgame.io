@@ -60,8 +60,7 @@ describe('MCTSDebug', () => {
 
     const m = Enzyme.mount(<MCTSDebug root={root} />);
 
-    m
-      .find('.mcts-node')
+    m.find('.mcts-node')
       .at(1)
       .simulate('click');
     expect(m.find('.mcts-root').text()).toContain('value 10');

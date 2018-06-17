@@ -197,13 +197,12 @@ export class Firebase {
     // TODO: better handling for possible errors
     if (config === undefined) config = {};
 
-    this.client = mockFirebase || firebase;
+    this.mockFirebase = mockFirebase;
+    this.client = firebase;
     // Default engine is Firestore
-    this.engine = config.engine === 'RTD' ? config.engine : 'Firestore';
-    this.apiKey = config.apiKey;
-    this.authDomain = config.authDomain;
-    this.databaseURL = config.databaseURL;
-    this.projectId = config.projectId;
+    this.engine = config.engine === 'RTDB' ? config.engine : 'Firestore';
+    const { apiKey, authDomain, databaseURL, projectId } = config;
+    this.config = { apiKey, authDomain, databaseURL, projectId };
     this.dbname = dbname;
     this.cache = new LRU({ max: cacheSize });
   }
@@ -211,20 +210,15 @@ export class Firebase {
    * Connect to the instance.
    */
   async connect() {
-    var config = {
-      apiKey: this.apiKey,
-      authDomain: this.authDomain,
-      databaseURL: this.databaseURL,
-      projectId: this.projectId,
-    };
-    // console.log('config', config);
-    this.client.initializeApp(config);
-    // console.log('init ok', app);
-    this.db =
-      this.engine === 'Firestore'
-        ? this.client.firestore()
-        : this.client.database();
-    // console.log('db', this.db);
+    if (this.mockFirebase) {
+      this.db = this.mockFirebase;
+    } else {
+      this.client.initializeApp(this.config);
+      this.db =
+        this.engine === 'Firestore'
+          ? this.client.firestore()
+          : this.client.database().ref();
+    }
     return;
   }
   /**
@@ -233,24 +227,6 @@ export class Firebase {
    * @param {object} store - A game state to persist.
    */
   async set(id, state) {
-    console.log('Set ID:', id);
-    // Don't set a value if the cache has a more recent version.
-    // This can occur due a race condition.
-    //
-    // For example:
-    //
-    // A --sync--> server | DB => 0 --+
-    //                                |
-    // A <--sync-- server | DB => 0 --+
-    //
-    // B --sync--> server | DB => 0 ----+
-    //                                  |
-    // A --move--> server | DB <= 1 --+ |
-    //                                | |
-    // A <--sync-- server | DB => 1 --+ |
-    //                                  |
-    // B <--sync-- server | DB => 0 ----+
-    //
     const cacheValue = this.cache.get(id);
     if (cacheValue && cacheValue._stateID >= state._stateID) {
       return;
@@ -259,8 +235,8 @@ export class Firebase {
     this.cache.set(id, state);
 
     const col =
-      this.engine === 'RTD'
-        ? this.db.ref(id)
+      this.engine === 'RTDB'
+        ? this.db.child(id)
         : this.db.collection(this.dbname).doc(id);
     delete state._id;
     await col.set(state);
@@ -275,31 +251,25 @@ export class Firebase {
    *                     if no game is found with this id.
    */
   async get(id) {
-    console.log('Get ID:', id);
     let cacheValue = this.cache.get(id);
     if (cacheValue !== undefined) {
       return cacheValue;
     }
 
     let col, doc, data;
-    console.log('engine', this.engine);
-    if (this.engine === 'RTD') {
-      col = this.db.ref(id);
+    if (this.engine === 'RTDB') {
+      col = this.db.child(id);
       data = await col.once('value');
-      doc = data.val();
+      doc = data.val()
+        ? Object.assign({}, data.val(), { _id: id })
+        : data.val();
     } else {
       col = this.db.collection(this.dbname).doc(id);
-      console.log('col', col);
       data = await col.get();
-      console.log('data', data);
-      doc = data.data();
-      console.log('doc', doc);
+      doc = data.data()
+        ? Object.assign({}, data.data(), { _id: id })
+        : data.data();
     }
-    // const docs = await col
-    //   .find()
-    //   .sort({ _id: -1 })
-    //   .limit(1)
-    //   .toArray();
 
     let oldStateID = 0;
     cacheValue = this.cache.get(id);
@@ -336,16 +306,9 @@ export class Firebase {
       return true;
     }
 
-    // const col = this.db.collection(id);
-    // const docs = await col
-    //   .find()
-    //   .limit(1)
-    //   .toArray();
-    // return docs.length > 0;
-
     let col, data, exists;
-    if (this.engine === 'RTD') {
-      col = this.db.ref(id);
+    if (this.engine === 'RTDB') {
+      col = this.db.child(id);
       data = await col.once('value');
       exists = data.exists();
     } else {

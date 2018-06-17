@@ -42,7 +42,7 @@ export function Server({ games, db, _clientInfo, _roomInfo }) {
         authDomain: process.env.FIREBASE_AUTHDOMAIN,
         databaseURL: process.env.FIREBASE_DATABASEURL,
         projectId: process.env.FIREBASE_PROJECTID,
-        engine: 'RTD',
+        engine: process.env.FIREBASE_ENGINE, // RTDB or Firestore
       };
       db = new Firebase({ config });
     } else {

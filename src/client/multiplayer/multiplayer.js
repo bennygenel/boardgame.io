@@ -79,7 +79,12 @@ export class Multiplayer {
       return result;
     });
 
-    enhancer = enhancer ? compose(enhancer, SocketEnhancer) : SocketEnhancer;
+    enhancer = enhancer
+      ? compose(
+          enhancer,
+          SocketEnhancer
+        )
+      : SocketEnhancer;
     this.store = createStore(reducer, enhancer);
 
     return this.store;

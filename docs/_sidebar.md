@@ -1,26 +1,26 @@
-* Getting Started
+- Getting Started
 
-  * [Overview](/)
-  * [Concepts](concepts.md)
-  * [Tutorial](tutorial.md)
+  - [Overview](/)
+  - [Concepts](concepts.md)
+  - [Tutorial](tutorial.md)
 
-* Guides
+- Guides
 
-  * [Multiplayer](multiplayer.md)
-  * [Turn Order](turn-order.md)
-  * [Phases](phases.md)
-  * [Secret State](secret-state.md)
-  * [Randomness](random.md)
-  * [Undo / Redo](undo.md)
-  * [Immutability](immutability.md)
-  * [Debugging](debugging.md)
+  - [Multiplayer](multiplayer.md)
+  - [Turn Order](turn-order.md)
+  - [Phases](phases.md)
+  - [Secret State](secret-state.md)
+  - [Randomness](random.md)
+  - [Undo / Redo](undo.md)
+  - [Immutability](immutability.md)
+  - [Debugging](debugging.md)
 
-* API Reference
+- API Reference
 
-  * [Game](api/Game.md)
-  * [Client](api/Client.md)
-  * [Server](api/Server.md)
-  * [Random](api/Random.md)
+  - [Game](api/Game.md)
+  - [Client](api/Client.md)
+  - [Server](api/Server.md)
+  - [Random](api/Random.md)
 
-* Component Library
-  * [Showcase](storybook.md)
+- Component Library
+  - [Showcase](storybook.md)
