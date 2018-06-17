@@ -182,7 +182,7 @@ test('Firestore', async () => {
   }
 });
 
-test('Firebase', async () => {
+test('RTDB', async () => {
   const mockConfig = {
     engine: 'RTDB',
     apiKey: 'apikey',
@@ -278,7 +278,7 @@ test('Firestore - race conditions', async () => {
   expect(db.cache.get('gameID')).toMatchObject({ _stateID: 1 });
 });
 
-test('Firebase - race conditions', async () => {
+test('RTDB - race conditions', async () => {
   const mockConfig = {
     engine: 'RTDB',
     apiKey: 'apikey',

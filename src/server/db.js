@@ -185,7 +185,7 @@ export class Mongo {
 }
 
 /**
- * Firebase RDT/Firestore connector.
+ * Firebase RTDB/Firestore connector.
  */
 export class Firebase {
   /**
