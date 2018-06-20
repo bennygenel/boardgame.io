@@ -5,51 +5,11 @@
  * license that can be found in the LICENSE file or at
  * https://opensource.org/licenses/MIT.
  */
-import Sequelize from 'sequelize';
-
-const GameModel = {
-  id: {
-    type: Sequelize.STRING,
-    unique: true,
-    primaryKey: true,
-  },
-  ctx: {
-    // can be JSONB for PostgreSQL
-    // but I'm not sure if this simple usage would benefit
-    type: Sequelize.JSON,
-  },
-};
 
 /**
  * SQL connector.
  */
 export class SQL {
-  /**
-   * Creates a new SQL connector object.
-   */
-  constructor({ url, config, engine }) {
-    if (url) this.db = new Sequelize(url);
-    else if (config) {
-      const {
-        database,
-        username,
-        password,
-        host,
-        port,
-        pool,
-        storage,
-      } = config;
-      this.db = new Sequelize(database, username, password, {
-        host,
-        port,
-        dialect: engine,
-        pool: Object.assign({ max: 5, idle: 10000, acquire: 30000 }, pool),
-        storage: storage || ':memory:',
-      });
-    }
-    this.game = this.db.define('game', GameModel);
-  }
-
   /**
    * Connect to the instance.
    */
@@ -58,6 +18,7 @@ export class SQL {
     if (c) {
       return console.error('Connection error', c);
     }
+    this.game.sync();
     return;
   }
 
