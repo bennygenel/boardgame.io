@@ -22,10 +22,10 @@ const DBFromEnv = () => {
     return new Firebase({ config, engine: process.env.FIREBASE_ENGINE });
   } else if (process.env.MYSQL_URL) {
     return new MySQL({ url: process.env.MYSQL_URL });
-  } else if (process.env.SQLite_URL) {
-    return new SQLite({ url: process.env.SQLite_URL });
-  } else if (process.env.POSTGRE_URL) {
-    return new PostgreSQL({ url: process.env.POSTGRE_URL });
+  } else if (process.env.SQLITE_PATH) {
+    return new SQLite({ path: process.env.SQLITE_PATH });
+  } else if (process.env.POSTGRES_URL) {
+    return new PostgreSQL({ url: process.env.POSTGRES_URL });
   } else {
     return new InMemory();
   }
