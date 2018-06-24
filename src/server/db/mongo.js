@@ -62,7 +62,6 @@ export class Mongo {
     if (cacheValue && cacheValue._stateID >= state._stateID) {
       return;
     }
-
     this.cache.set(id, state);
 
     const col = this.db.collection(id);

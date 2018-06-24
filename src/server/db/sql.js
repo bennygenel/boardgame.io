@@ -6,20 +6,27 @@
  * https://opensource.org/licenses/MIT.
  */
 
+const LRU = require('lru-cache');
+
 /**
  * SQL connector.
  */
 export class SQL {
+  constructor({ cacheSize }) {
+    if (cacheSize === undefined) cacheSize = 1000;
+    this.cache = new LRU({ max: cacheSize });
+  }
   /**
    * Connect to the instance.
    */
   async connect() {
-    const c = await this.db.authenticate();
-    if (c) {
-      return console.error('Connection error', c);
+    try {
+      await this.db.authenticate();
+      this.game.sync();
+      return;
+    } catch (error) {
+      return new Error(error);
     }
-    this.game.sync();
-    return;
   }
 
   /**
@@ -52,8 +59,8 @@ export class SQL {
 
     this.cache.set(id, state);
 
-    delete state._id;
-    await this.game.upsert({ id, ctx: state });
+    // delete state._id;
+    await this.game.upsert({ id, ctx: { _id: id, ...state } });
 
     return;
   }
@@ -70,7 +77,7 @@ export class SQL {
       return cacheValue;
     }
 
-    const doc = await this.db.findOne({ where: { id } });
+    const doc = await this.game.findOne({ where: { id } });
 
     let oldStateID = 0;
     cacheValue = this.cache.get(id);
@@ -82,7 +89,7 @@ export class SQL {
 
     let newStateID = -1;
     if (doc) {
-      newStateID = doc._stateID;
+      newStateID = doc.ctx._stateID;
     }
 
     // Update the cache, but only if the read
@@ -90,10 +97,10 @@ export class SQL {
     // A race condition might overwrite the
     // cache with an older value, so we need this.
     if (newStateID >= oldStateID) {
-      this.cache.set(id, doc);
+      this.cache.set(id, { ...doc.ctx });
     }
 
-    return doc.ctx;
+    return doc ? { ...doc.ctx } : null;
   }
 
   /**
@@ -107,7 +114,7 @@ export class SQL {
       return true;
     }
 
-    const doc = await this.db.findOne({ where: { id } });
+    const doc = await this.game.findOne({ where: { id } });
     return doc !== null;
   }
 }

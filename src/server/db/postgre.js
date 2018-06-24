@@ -5,7 +5,6 @@
  * license that can be found in the LICENSE file or at
  * https://opensource.org/licenses/MIT.
  */
-const LRU = require('lru-cache');
 const Sequelize = require('sequelize');
 
 import { SQL } from './sql';
@@ -28,19 +27,17 @@ export class PostgreSQL extends SQL {
    * Creates a new SQL connector object.
    */
   constructor({ url, config, cacheSize }) {
-    super();
-    if (cacheSize === undefined) cacheSize = 1000;
+    super({ cacheSize });
     if (url) this.db = new Sequelize(url);
-    else if (config) {
+    else {
       const { database, username, password, host, port, pool } = config;
       this.db = new Sequelize(database, username, password, {
         host,
         port,
-        dialect: 'mysql',
+        dialect: 'postgres',
         pool: Object.assign({ max: 5, idle: 10000, acquire: 30000 }, pool),
       });
     }
     this.game = this.db.define('game', GameModel);
-    this.cache = new LRU({ max: cacheSize });
   }
 }

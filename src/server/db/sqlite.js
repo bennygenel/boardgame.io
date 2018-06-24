@@ -5,7 +5,6 @@
  * license that can be found in the LICENSE file or at
  * https://opensource.org/licenses/MIT.
  */
-const LRU = require('lru-cache');
 const Sequelize = require('sequelize');
 
 import { SQL } from './sql';
@@ -28,29 +27,21 @@ export class SQLite extends SQL {
    * Creates a new SQL connector object.
    */
   constructor({ path, config, cacheSize }) {
-    super();
-    if (cacheSize === undefined) cacheSize = 1000;
+    super({ cacheSize });
     if (path) {
       this.db = new Sequelize(`sqlite://${path}`);
-    } else if (config) {
-      const {
-        database,
-        username,
-        password,
-        host,
-        port,
-        pool,
-        storage,
-      } = config;
+    } else {
+      const { database, username, password, host, port, pool } = config;
+      let storage = ':memory:';
+      if (config.storage) storage = config.storage;
       this.db = new Sequelize(database, username, password, {
         host,
         port,
         dialect: 'sqlite',
         pool: Object.assign({ max: 5, idle: 10000, acquire: 30000 }, pool),
-        storage: storage || ':memory:',
+        storage,
       });
     }
     this.game = this.db.define('game', GameModel);
-    this.cache = new LRU({ max: cacheSize });
   }
 }
