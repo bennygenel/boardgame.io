@@ -1,12 +1,6 @@
-# Turn Orders
+# Turn Order
 
-When the turn ends (either by calling `endTurn` manually
-or if the `endTurnIf` condition triggers), then the
-turn is passed to the "next" player. The default behavior
-is to pass the turn around in a round-robin fashion.
-
-The framework maintains the turn order state using the
-following fields:
+The framework maintains the turn order using the following fields:
 
 ```
 ctx: {
@@ -31,8 +25,7 @@ is updated is determined by a particular `TurnOrder`. The default
 behavior is to just increment it in a round-robin fashion.
 `currentPlayer` is just `playerOrder[playOrderPos]`.
 
-If you need something different from the default round-robin
-turn order, you have a few options:
+If you need something different, you have a few options:
 
 #### turnOrder
 

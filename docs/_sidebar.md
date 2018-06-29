@@ -7,12 +7,11 @@
 * Guides
 
   * [Multiplayer](multiplayer.md)
-  * [Turn Orders](turn-order.md)
+  * [Turn Order](turn-order.md)
   * [Phases](phases.md)
-  * [Events](events.md)
-  * [Undo / Redo](undo.md)
-  * [Randomness](random.md)
   * [Secret State](secret-state.md)
+  * [Randomness](random.md)
+  * [Undo / Redo](undo.md)
   * [Immutability](immutability.md)
   * [Debugging](debugging.md)
 
